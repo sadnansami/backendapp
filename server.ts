@@ -1,9 +1,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { DatabaseConnector as db}from "./src/DatabaseConnector";
+import { DatabaseConnector as db } from "./src/DatabaseConnector";
 import Brands from "./src/Brands";
 import Watches from "./src/Watches";
+import Users from "./src/Users";
 
 /*
 This is a workaround since 'dotenv.config().parsed' produces an object with all the credentials,
@@ -16,8 +17,10 @@ const PORT = 2000
 
 const app = express();
 db.setConnection = CREDENTIALS;
+
 const brands = new Brands();
 const watches = new Watches();
+const users = new Users();
 
 
 app.use(cors());
