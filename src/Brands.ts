@@ -1,9 +1,7 @@
-import Connection from "mysql2/typings/mysql/lib/Connection";
 import { DatabaseConnector as db } from "./DatabaseConnector";
-import { DBInterface } from "./Interfaces";
-import dotenv from "dotenv";
+import { QueryInterface } from "./Interfaces";
 
-class Brands extends db implements DBInterface {
+class Brands extends db implements QueryInterface {
 	/*
 	'db' instance is private due to security reasons. 
 	This can cause unexpected errors if the properties of 'db' are accessed from this class

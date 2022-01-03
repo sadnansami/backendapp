@@ -5,7 +5,6 @@ export interface Credentials {
 	DB:string;
 };
 
-export interface DBInterface {
+export interface QueryInterface {
 	request(): any;
-	
 };

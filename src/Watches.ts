@@ -1,7 +1,7 @@
-import { DatabaseConnector as db} from "./DatabaseConnector";
-import { DBInterface } from "./Interfaces";
+import { DatabaseConnector as db } from "./DatabaseConnector";
+import { QueryInterface } from "./Interfaces";
 
-class Watches extends db implements DBInterface {
+class Watches extends db implements QueryInterface {
 
 	request():Promise<object> {
 		return new Promise((resolve, reject) => {

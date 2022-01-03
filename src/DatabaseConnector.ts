@@ -1,6 +1,5 @@
-import { request } from "express";
-import mysql2, { Connection, Pool } from "mysql2";
-import { Credentials, DBInterface } from "./Interfaces";
+import mysql2, { Pool } from "mysql2";
+import { Credentials } from "./Interfaces";
 
 export abstract class DatabaseConnector {
 	/*
