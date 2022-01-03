@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import DatabaseConnector from "./src/DatabaseConnector";
+import { DatabaseConnector as db}from "./src/DatabaseConnector";
 import Brands from "./src/Brands";
 import Watches from "./src/Watches";
 
@@ -14,17 +14,11 @@ const CREDENTIALS = JSON.parse(JSON.stringify(dotenv.config().parsed))
 const PORT = 2000
 
 
-const app = express()
+const app = express();
+db.setConnection = CREDENTIALS;
+const brands = new Brands();
+const watches = new Watches();
 
-const db = new DatabaseConnector(CREDENTIALS);
-
-/*
-The 'db' instance is like a token which is used to securely access a specific MySQL database connection as an API.
-*/
-db.request()
-
-const brands = new Brands(db);
-const watches = new Watches(db);
 
 app.use(cors());
 

@@ -1,49 +1,42 @@
-import mysql2, { Connection } from "mysql2";
+import { request } from "express";
+import mysql2, { Connection, Pool } from "mysql2";
 import { Credentials, DBInterface } from "./Interfaces";
 
-class DatabaseConnector {
+export abstract class DatabaseConnector {
 	/*
-	By default (i.e: on instantiation) If no connection to a MySQL server is established, the 'con' attribute is of 'any type. 
-	It can either be of 'any' or the 'Connection' type if its an instance of it.
-	This means that it's prone to a fatal error, which causes a runtime error where it actually has the value 'undefined'
-	but a MySQL query is trying to access a property of 'con' called 'query' which doesnt actually exist.
-	The runtime error is very vague and thus makes debugging very difficult since it cannot be easily pointed out where the root of the problem is.
-	Therefore we need utilize defensive programming and perform error checking.
-	To prevent this we need to break the program and throw an error which indicates that the cause of the error is the absence of a connection 
-	and stems from the 'DatabaseConnector' class.
+	'con' is only assigned at a later stage, which means we would have to let it be 'unknown' or 'Pool'.
+	This compromises security since otherwise any value could be assigned to 'con' and therefore it could break the program. 
+	Compiler doesn't allow it to be of type 'Pool' only unless it is assigned in the constructor so it is forced by the '!' operator
+	which asserts to the compiler that the value is definitely not null (i.e: unknown)
 	*/
-	private con: undefined | Connection;
+	private static con: Pool;
 
-	constructor(private credentials: Credentials) {};
+	static set setConnection(credentials: Credentials) {
+		/*
+		'createPool()' opens a continuous parallel connection where multiple queries can be executed on the same connection and this returns an object with the type 'Pool'
+		*/
+		this.con = mysql2.createPool({
+			host: credentials.HOST,
+			user: credentials.USER,
+			password: credentials.PASSWORD,
+			database: credentials.DB
+		})
 
-	request() {
-		this.con = mysql2.createConnection({
-			host: this.credentials.HOST,
-			user: this.credentials.USER,
-			password: this.credentials.PASSWORD,
-			database: this.credentials.DB
-		});
-
-		this.con.connect((err: any): void => {
+		this.con.getConnection((err) => {
 			if(err) {
-				throw err;
+				throw err.code
 			} else {
-				console.log("Successfully connected to MySQL Server!")
-			};
+				console.info("Successfully connected to MySQL Server!")
+			}
 		})
 	}
 
-	get getCredentials(): Credentials {
-		return this.credentials;
-	}
 
-	get getConnection(): Connection {
-		if(typeof this.con == "object") {
-			return this.con
-		} else {
-			throw "Error - Property 'DatabaseConnector.getConnection' was accessed without already establishing a connection to a MySQL Server. This may be due to an instance of the 'DatabaseConnector' class being passed into another class without calling 'Database.request' method() prior to it."
+	static get getConnection() {
+		if(!this.con) {
+			throw "Error - 'con' attribute was accessed through 'getConnection' without establish a connection to Server"
 		}
+
+		return this.con
 	}
 }
-
-export default DatabaseConnector;
