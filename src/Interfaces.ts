@@ -1,5 +1,3 @@
-import Connection from "mysql2/typings/mysql/lib/Connection";
-
 export interface Credentials {
 	HOST:string;
 	USER:string;
