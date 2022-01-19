@@ -1,13 +1,12 @@
-import { DatabaseConnector as db } from "./DatabaseConnector";
+import { DatabaseConnector } from "./DatabaseConnector";
 import { QueryInterface } from "./Interfaces";
 
-class Users extends db implements QueryInterface {
-	request():Promise<object> {
-		return new Promise((resolve, reject) => {
-			db.getConnection.query("SELECT * FROM users", (err: any, data: object, fields: any) => {
-				return resolve(data)
-			})
-		})
+class Users implements QueryInterface {
+
+	constructor(private db: DatabaseConnector) {}
+
+	read():Promise<object> {
+		return this.db.query("SELECT * FROM users")
 	}
 }
 

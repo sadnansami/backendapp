@@ -1,28 +1,55 @@
-import { DatabaseConnector as db } from "./DatabaseConnector";
+import { DatabaseConnector } from "./DatabaseConnector";
 import { QueryInterface } from "./Interfaces";
 
-class Watches extends db implements QueryInterface {
+class Watches implements QueryInterface {
 
-	request():Promise<object> {
-		return new Promise((resolve, reject) => {
-			db.getConnection.query("SELECT * FROM watches", (err: any, data: object, fields: any) => {
-				return resolve(data)
-			});
-		});	
+	constructor(private db: DatabaseConnector) {}
+
+	create():Promise<any> {
+		return this.db.query(`
+			INSERT INTO watches(
+				brand_id,
+				name,
+				model,
+				case_material,
+				case_diameter,
+				case_bezel_material,
+				case_dial_colour,
+				strap_material,
+				strap_colour,
+				strap_clasp_type,
+				strap_clasp_material,
+				release_year
+			) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			[
+				1,
+				'Rolex GMT II',
+				'16710T',
+				'Steel',
+				'40x40mm',
+				'Steel',
+				'Black/Red',
+				'Steel',
+				'Metallic Gray',
+				'Fold clasp',
+				'Steel',
+				2006
+			])
 	}
 
-	requestOne(id: number, brand_id?: number):Promise<any> {
-		return new Promise((resolve, reject) => {
-			if(brand_id) {
-				//testing
-				return resolve(null)
-			} else {
-				db.getConnection.query("SELECT * FROM watches WHERE watch_id=?", [id] , (err: any, data: any, fields: any) => {
-					return resolve(data)
-				});
-			}
-		});	
+	read():Promise<object> {
+		return this.db.query("SELECT * FROM watches")	
+	}
+
+	readOne(id: number):Promise<any> {
+		return this.db.query("SELECT * FROM watches WHERE watch_id=?", [id])	
 	};
+
+	updateOne(id: number) {
+		return new Promise((resolve, reject) => {
+			//db.getConnection.execute()
+		})
+	}
 }
 
 export default Watches;

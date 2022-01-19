@@ -6,5 +6,5 @@ export interface Credentials {
 };
 
 export interface QueryInterface {
-	request(): any;
+	read(): any;
 };
