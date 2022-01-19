@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { DatabaseConnector as db } from "./src/DatabaseConnector";
+import { DatabaseConnector } from "./src/DatabaseConnector";
 import Brands from "./src/Brands";
 import Watches from "./src/Watches";
 import Users from "./src/Users";
@@ -16,21 +16,38 @@ const PORT = 2000
 
 
 const app = express();
-db.setConnection = CREDENTIALS;
 
-const brands = new Brands();
-const watches = new Watches();
-const users = new Users();
+const db = DatabaseConnector.createInstance(CREDENTIALS);
 
 
+const brands = new Brands(db);
+const watches = new Watches(db);
+const users = new Users(db);
+
+//Used to allow Cross-origin HTTP requests since the backend and frontend communicate via HTTP form different addresses
 app.use(cors());
 
-app.get("/requestbrands", (req: express.Request, res: express.Response): void => {
-	brands.request().then((data) => {
+//Used for JSON data handling
+app.use(express.json())
+
+app.get("/readbrands", (req: express.Request, res: express.Response): void => {
+	brands.read().then((data) => {
 		res.json(data);
+	})
+})
+
+app.post("/updatewatchprice", (req: express.Request, res: express.Response): void => {
+	req.body.priceList.forEach((item: any) => {
+		console.log(item.y.mean.value)
+	});
+})
+
+app.get("/createwatch", (req: express.Request, res: express.Response): void => {
+	watches.create().then((data) => {
+		console.log(data)
 	})
 })
 
 app.listen(PORT, (): void => {
 	console.log(`Watchify Server running on port: ${PORT}`);
-})
+});
