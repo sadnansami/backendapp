@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { DatabaseConnector } from "./src/DatabaseConnector";
+import DatabaseConnector from "./src/DatabaseConnector";
 import Brands from "./src/Brands";
 import Watches from "./src/Watches";
 import Users from "./src/Users";
@@ -17,7 +17,7 @@ const PORT = 2000
 
 const app = express();
 
-const db = DatabaseConnector.createInstance(CREDENTIALS);
+const db = DatabaseConnector.getInstance(CREDENTIALS);
 
 
 const brands = new Brands(db);
@@ -34,19 +34,25 @@ app.get("/readbrands", (req: express.Request, res: express.Response): void => {
 	brands.read().then((data) => {
 		res.json(data);
 	})
-})
+});
+
+app.get("/readwatches", (req: express.Request, res: express.Response): void => {
+	watches.read().then((data) => {
+		res.json(data);
+	})
+});
 
 app.post("/updatewatchprice", (req: express.Request, res: express.Response): void => {
 	req.body.priceList.forEach((item: any) => {
 		console.log(item.y.mean.value)
 	});
-})
+});
 
 app.get("/createwatch", (req: express.Request, res: express.Response): void => {
 	watches.create().then((data) => {
 		console.log(data)
-	})
-})
+	});
+});
 
 app.listen(PORT, (): void => {
 	console.log(`Watchify Server running on port: ${PORT}`);

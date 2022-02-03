@@ -1,7 +1,7 @@
 import { DatabaseConnector } from "./DatabaseConnector";
-import { QueryInterface } from "./Interfaces";
+import { IQuery } from "./Interfaces";
 
-class Watches implements QueryInterface {
+class Watches implements IQuery {
 
 	constructor(private db: DatabaseConnector) {}
 
@@ -37,7 +37,7 @@ class Watches implements QueryInterface {
 			])
 	}
 
-	read():Promise<object> {
+	read():Promise<any> {
 		return this.db.query("SELECT * FROM watches")	
 	}
 

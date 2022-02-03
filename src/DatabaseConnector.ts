@@ -1,6 +1,7 @@
 import mysql2, { Pool } from "mysql2/promise";
 import { Credentials } from "./Interfaces";
 
+//@staticDecorator<IDBConnectorStatic>()
 export class DatabaseConnector {
 	/*
 	'con' is only assigned at a later stage, which means we would have to let it be 'unknown' or 'Pool'.
@@ -34,38 +35,37 @@ export class DatabaseConnector {
 			
 	}
 
-	get getConnection() {
+	get getConnection(): Pool {
 		if(!this.con) {
-			throw "Error - Instance of 'DatabaseConnector' was invoked without establishing a connection to Server"
+			throw "Error: Instance of 'DatabaseConnector' was invoked without establishing a connection to Server"
 		}
 
 		return this.con
 	}
 
-	static createInstance(credentials: Credentials) {
+	static getInstance(credentials: Credentials): DatabaseConnector {
 		if(!this.instance) {
 			this.instance = new DatabaseConnector()
+			this.instance.setConnection = credentials
 		}
-
-		this.instance.setConnection = credentials
 
 		return this.instance
 	}
 
-	async query(sql: string):Promise<object>;
-	async query(sql: string, parameters: Array<any>):Promise<object>;
+	async query(sql: string): Promise<any>;
+	async query(sql: string, parameters: any[]): Promise<any>;
 	
-	async query(arg1: string, arg2?: Array<any>):Promise<object> {
+	async query(arg1: string, arg2?: any[]): Promise<any> {
 		let res: any;
 		try {
 			if(!arg2) {
 				console.log("query");
-				[res] = await this.con.query(arg1)
+				[res] = await this.getConnection.query(arg1)
 
 				return res
 			} else {
 				console.log("execute")
-				res = await this.con.execute(arg1, arg2)
+				res = await this.getConnection.execute(arg1, arg2)
 			}
 			//res = await this.con.execute("SELECT * FROM brands WHERE brand_id=?", ...arg2)
 		} catch(err) {
@@ -75,3 +75,5 @@ export class DatabaseConnector {
 		}
 	}
 }
+
+export default DatabaseConnector
