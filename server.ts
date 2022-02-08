@@ -61,7 +61,6 @@ app.get("/matchwatches", (req: express.Request, res: express.Response): void => 
 			data.forEach((watch: any) => {
 				//Pattern matches by both name and model and if either returns true then 'matchFound' is true
 				let matchFound = pm.match(watch.name, req.query.pattern!.toString()) || pm.match(watch.name, req.query.pattern!.toString())
-				console.log(true || true, watch.name, watch.model, req.query.pattern!.toString(), matchFound)
 		
 				if(matchFound == true) {
 					matches.push(watch)	
