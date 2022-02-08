@@ -59,12 +59,10 @@ export class DatabaseConnector {
 		let res: any;
 		try {
 			if(!arg2) {
-				console.log("query");
 				[res] = await this.getConnection.query(arg1)
 
 				return res
 			} else {
-				console.log("execute")
 				res = await this.getConnection.execute(arg1, arg2)
 			}
 			//res = await this.con.execute("SELECT * FROM brands WHERE brand_id=?", ...arg2)
@@ -76,4 +74,4 @@ export class DatabaseConnector {
 	}
 }
 
-export default DatabaseConnector
+export default DatabaseConnector;

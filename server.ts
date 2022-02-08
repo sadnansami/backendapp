@@ -5,6 +5,7 @@ import DatabaseConnector from "./src/DatabaseConnector";
 import Brands from "./src/Brands";
 import Watches from "./src/Watches";
 import Users from "./src/Users";
+import PatternMatching from "./src/utility/PatternMatching";
 
 /*
 This is a workaround since 'dotenv.config().parsed' produces an object with all the credentials,
@@ -18,11 +19,10 @@ const PORT = 2000
 const app = express();
 
 const db = DatabaseConnector.getInstance(CREDENTIALS);
-
-
 const brands = new Brands(db);
 const watches = new Watches(db);
 const users = new Users(db);
+const pm = new PatternMatching()
 
 //Used to allow Cross-origin HTTP requests since the backend and frontend communicate via HTTP form different addresses
 app.use(cors());
@@ -53,6 +53,29 @@ app.get("/createwatch", (req: express.Request, res: express.Response): void => {
 		console.log(data)
 	});
 });
+
+app.get("/matchwatches", (req: express.Request, res: express.Response): void => {
+	let matches: Object[] = []
+	watches.read()
+		.then((data) => {
+			data.forEach((watch: any) => {
+				//Pattern matches by both name and model and if either returns true then 'matchFound' is true
+				let matchFound = pm.match(watch.name, req.query.pattern!.toString()) || pm.match(watch.name, req.query.pattern!.toString())
+				console.log(true || true, watch.name, watch.model, req.query.pattern!.toString(), matchFound)
+		
+				if(matchFound == true) {
+					matches.push(watch)	
+				}
+			})
+		})
+		.then(() => {
+			res.json({matches: matches})
+		})
+		.catch((err) => {
+			//Catch block catches any error such as if the pattern is longer than string and responds with an empty list
+			res.json({matches: []})
+		})
+})
 
 app.listen(PORT, (): void => {
 	console.log(`Watchify Server running on port: ${PORT}`);
