@@ -1,42 +1,75 @@
-class Cache {
-	readonly SIZE = 100;
-	readonly CODES = "#abcdefghijklmnopqrstuvwxyz1234567890-_+&():/";
+import HashFunctions from "./HashFunctions";
+import LinkedList from "./LinkedList";
 
+class Cache extends HashFunctions{
+	readonly SIZE = 97
 
-	hash(string: string): number;
-	hash(string: string, mode: "full" | "partial"): number;
+	private hashTable = new Array(this.SIZE)
 	
-	hash(string: string, mode?: "full" | "partial"): number {
+	hash(string: string): number {
+		string = this.simplify(string)
 		let carryDigit = 0;
 		let hashValue = "";
 		
-		[string].forEach((char: any) => {
+		console.log("character,", "code,", "one's digit + carry,", "subtotal");
+
+
+		[...string].forEach((char: any) => {
 			try {
 				//Returns index of character in CODE as a string
 				const charCode = this.CODES.indexOf(char).toString()
 
 				if(charCode == "-1") {
-					throw  "Error: Invalid String cannot be Hashed"
+					console.log(string, char)
+					throw  "Error: Invalid String cannot be Hashed!"
 				}
 
 
+				console.log(char, charCode, parseInt(charCode.at(-1)!) + carryDigit, parseInt(charCode.at(-1)!) + carryDigit + hashValue)
+				hashValue = parseInt(charCode.at(-1)!) + carryDigit + hashValue
 
 				if(charCode.length == 2) {
-					carryDigit += Number(charCode[0])
+					carryDigit = parseInt(charCode[0])
 				}
-
-				hashValue += carryDigit
-				carryDigit = 0
-
-				hashValue += charCode[-1]
 			} catch(err) {
 				throw err
 			}
 		})
 		
-		let sum = [string].reduce((total, add) => {
-			return total + add;
+		return parseInt(hashValue)
+	}
+
+	checksum(hash: number): number {
+		let sum = 0;
+
+		[...hash.toString()].forEach((digit) => {
+			sum += parseInt(digit)
 		})
+
+		sum = sum % this.SIZE;
+
+		return sum
+	}
+
+	add(hash: number, data: any): void {
+		const index = this.checksum(hash)
+		if(this.hashTable[index] == undefined) {
+			this.hashTable[index] = new LinkedList(data)
+		} else {
+			this.hashTable[index].append(data)
+		}
+	}
+
+	read(location: number): any {
+		try {
+			if(location > this.SIZE || location < 0) {
+				throw "Error: Index Location of Hashtable given is invalid!"
+			}
+
+			return this.hashTable[location]
+		} catch(err) {
+			throw err
+		}
 	}
 }
 
