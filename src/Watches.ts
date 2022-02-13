@@ -1,12 +1,9 @@
 import { DatabaseConnector } from "./DatabaseConnector";
 import { IQuery } from "./Interfaces";
 
-class Watches implements IQuery {
-
-	constructor(private db: DatabaseConnector) {}
-
+class Watches extends DatabaseConnector implements IQuery {
 	create():Promise<any> {
-		return this.db.query(`
+		return this.query(`
 			INSERT INTO watches(
 				brand_id,
 				name,
@@ -38,11 +35,11 @@ class Watches implements IQuery {
 	}
 
 	read():Promise<any> {
-		return this.db.query("SELECT * FROM watches")	
+		return this.query("SELECT * FROM watches")	
 	}
 
 	readOne(id: number):Promise<any> {
-		return this.db.query("SELECT * FROM watches WHERE watch_id=?", [id])	
+		return this.query("SELECT * FROM watches WHERE watch_id=?", [id])	
 	};
 
 	updateOne(id: number) {

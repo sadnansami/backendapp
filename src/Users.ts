@@ -1,12 +1,9 @@
 import { DatabaseConnector } from "./DatabaseConnector";
 import { IQuery } from "./Interfaces";
 
-class Users implements IQuery {
-
-	constructor(private db: DatabaseConnector) {}
-
+class Users extends DatabaseConnector implements IQuery {
 	read():Promise<any> {
-		return this.db.query("SELECT * FROM users")
+		return this.query("SELECT * FROM users")
 	}
 }
 

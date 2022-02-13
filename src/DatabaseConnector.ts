@@ -1,7 +1,6 @@
 import mysql2, { Pool } from "mysql2/promise";
 import { Credentials } from "./Interfaces";
 
-//@staticDecorator<IDBConnectorStatic>()
 export class DatabaseConnector {
 	/*
 	'con' is only assigned at a later stage, which means we would have to let it be 'unknown' or 'Pool'.
@@ -10,15 +9,13 @@ export class DatabaseConnector {
 	which asserts to the compiler that the value is definitely not null (i.e: unknown)
 	*/
 	private static instance: DatabaseConnector;
-	private con!: Pool;
+	static connection: Pool;
 
-	private constructor() {}
-
-	set setConnection(credentials: Credentials) {
+	static setConnection(credentials: Credentials) {
 		/*
 		'createPool()' opens a continuous parallel connection where multiple queries can be executed on the same connection and this returns an object with the type 'Pool'
 		*/
-		this.con = mysql2.createPool({
+		this.connection = mysql2.createPool({
 			host: credentials.HOST,
 			user: credentials.USER,
 			password: credentials.PASSWORD,
@@ -26,30 +23,13 @@ export class DatabaseConnector {
 			multipleStatements: true
 		})
 
-		this.con.getConnection()
+		this.connection.getConnection()
 			.then(() => {
 				console.info("Successfully connected to MySQL Server!")
 			}).catch((err) => {
-				throw err
+				throw "Error: Connection to MySQL Server failed!"
 			})
 			
-	}
-
-	get getConnection(): Pool {
-		if(!this.con) {
-			throw "Error: Instance of 'DatabaseConnector' was invoked without establishing a connection to Server"
-		}
-
-		return this.con
-	}
-
-	static getInstance(credentials: Credentials): DatabaseConnector {
-		if(!this.instance) {
-			this.instance = new DatabaseConnector()
-			this.instance.setConnection = credentials
-		}
-
-		return this.instance
 	}
 
 	async query(sql: string): Promise<any>;
@@ -58,18 +38,20 @@ export class DatabaseConnector {
 	async query(arg1: string, arg2?: any[]): Promise<any> {
 		let res: any;
 		try {
+			if(typeof DatabaseConnector.connection == "undefined") {
+				throw "Error: No established connection to MySQL Server"
+			}
+
 			if(!arg2) {
-				[res] = await this.getConnection.query(arg1)
+				[res] = await DatabaseConnector.connection.query(arg1)
 
 				return res
 			} else {
-				res = await this.getConnection.execute(arg1, arg2)
+				res = await DatabaseConnector.connection.execute(arg1, arg2)
 			}
 			//res = await this.con.execute("SELECT * FROM brands WHERE brand_id=?", ...arg2)
 		} catch(err) {
-			res.iojw
-		} finally {
-			return res
+			throw err
 		}
 	}
 }
