@@ -50,6 +50,22 @@ export class LinkedList {
 
 		prevNodeTracker!.next = null
 	}
+
+	iterate(index: Node = this.head): any {
+		let list: any[];
+		if(index.next != null) {
+			//Get the value of the next Node recursively
+			list = this.iterate(index.next)
+			// add it to the list in Reverse order so the final output is in the order it was called
+			list = [index.data, ...list]
+		} else {
+			//If its the final Node in the Linked List then return its value as an array since it otherwise distributes all the characters in the string as if it was an Array
+			return [index.data]
+
+		}
+
+		return list
+	}
 }
 
 export default LinkedList;
