@@ -2,9 +2,7 @@ import Database from "./Database";
 import { IDatabase } from "./Interfaces";
 
 class Watches extends Database implements IDatabase {
-	constructor() {
-		super("watches")
-	}
+	
 
 	create():Promise<any> {
 		return this.query(`

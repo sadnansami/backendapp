@@ -4,12 +4,9 @@ import Cache from "./utility/Cache";
 
 export class Database {
 	protected static connection: Pool;
-	table: string;
+	//Gets the name of the class and uses this as the table name. I.e.: if 'Brands.ts' is instantiated, its 'table' attribute will be 'Brands' and this can be dynamically used in SQL
+	table = this.constructor.name;
 	cache = new Cache();
-
-	constructor(table: string) {
-		this.table = table
-	}
 
 	static connect(credentials: Credentials) {
 		/*
