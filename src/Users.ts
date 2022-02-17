@@ -1,7 +1,6 @@
-import { DatabaseConnector } from "./Database";
-import { IQuery } from "./Interfaces";
+import Database from "./Database";
 
-class Users extends DatabaseConnector implements IQuery {
+class Users extends Database {
 	read():Promise<any> {
 		return this.query("SELECT * FROM users")
 	}

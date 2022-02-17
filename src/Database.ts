@@ -2,7 +2,7 @@ import mysql2, { Pool } from "mysql2/promise";
 import { Credentials } from "./Interfaces";
 import Cache from "./utility/Cache";
 
-export class DatabaseConnector {
+export class Database {
 	protected static connection: Pool;
 	cache = new Cache();
 
@@ -33,16 +33,16 @@ export class DatabaseConnector {
 	async query(sql: string, args?: any[]): Promise<any> {
 		let res: any;
 		try {
-			if(typeof DatabaseConnector.connection == "undefined") {
+			if(typeof Database.connection == "undefined") {
 				throw "Error: No established connection to MySQL Server"
 			}
 
 			if(typeof args == "undefined") {
-				[res] = await DatabaseConnector.connection.query(sql)
+				[res] = await Database.connection.query(sql)
 
 				return res
 			} else {
-				res = await DatabaseConnector.connection.execute(sql, args)
+				res = await Database.connection.execute(sql, args)
 			}
 		} catch(err) {
 			throw err
@@ -50,4 +50,4 @@ export class DatabaseConnector {
 	}
 }
 
-export default DatabaseConnector;
+export default Database;

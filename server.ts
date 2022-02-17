@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
-import DatabaseConnector from "./src/Database";
+import Database from "./src/Database";
 import { router as brandsrouter } from "./routes/BrandsRoute";
 import { router as watchesrouter } from "./routes/WatchesRoute";
 
@@ -15,7 +15,7 @@ const CREDENTIALS = {
 const PORT = 2000
 const app = express();
 
-DatabaseConnector.connect(CREDENTIALS);
+Database.connect(CREDENTIALS);
 
 //Used to allow Cross-origin HTTP requests since the backend and frontend communicate via HTTP from different addresses
 app.use(cors());

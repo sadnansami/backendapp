@@ -1,7 +1,7 @@
-import DatabaseConnector from "./Database";
+import Database from "./Database";
 import { IDatabase } from "./Interfaces";
 
-class Watches extends DatabaseConnector implements IDatabase{
+class Watches extends Database implements IDatabase{
 	create():Promise<any> {
 		return this.query(`
 			INSERT INTO watches(

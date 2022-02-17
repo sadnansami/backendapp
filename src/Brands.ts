@@ -1,8 +1,8 @@
-import { DatabaseConnector } from "./Database";
+import Database from "./Database";
 import { IDatabase } from "./Interfaces";
 import Cache from "./utility/Cache";
 
-class Brands extends DatabaseConnector implements IDatabase {
+class Brands extends Database implements IDatabase {
 	cache = new Cache()
 
 	read(id?: number):Promise<any> {
