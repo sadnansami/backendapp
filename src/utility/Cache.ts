@@ -1,7 +1,8 @@
 import HashFunctions from "./HashFunctions";
 import LinkedList, { Node } from "./LinkedList";
+import { ICache } from "./UtilityInterfaces";
 
-class Cache extends HashFunctions{
+class Cache extends HashFunctions implements ICache {
 	readonly SIZE = 97
 	
 	hashTable = new Array(this.SIZE)
@@ -11,9 +12,13 @@ class Cache extends HashFunctions{
 		let index = hash % this.SIZE;
 
 		if(this.hashTable[index] == undefined) {
-			this.hashTable[index] = new LinkedList(data)
+
+			this.hashTable[index] = new LinkedList({hash: hash, data:data})
 		} else {
-			this.hashTable[index].append(data)
+			if(this.hashTable[index].head.data[0] == hash) {
+				throw "Error: An item already exists with the same hash in the Cache!"
+			}
+			this.hashTable[index].append({hash: hash, data:data})
 		}
 	}
 
@@ -24,11 +29,11 @@ class Cache extends HashFunctions{
 			let index = hash % this.SIZE;
 
 			try {
-				if(index > this.SIZE || index < 0) {
-					throw "Error: Index Location of Hashtable given is invalid!"
+				if(index < 0 || index > this.SIZE ) {
+					throw "Error: Index Location of Cache given is invalid!"
 				}
-
-				return this.hashTable[index].head
+			
+				return this.hashTable[index].iterateAll()
 			} catch(err) {
 				throw err
 			}
@@ -36,7 +41,7 @@ class Cache extends HashFunctions{
 			let entries: any[] = []
 			this.hashTable.forEach((slot) => {
 				//Traverse every slot of the Hashtable
-				slot = slot.iterate()
+				slot = slot.iterateAll()
 				entries.push(...slot)
 			})
 

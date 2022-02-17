@@ -1,10 +1,12 @@
 import mysql2, { Pool } from "mysql2/promise";
 import { Credentials } from "./Interfaces";
+import Cache from "./utility/Cache";
 
 export class DatabaseConnector {
 	protected static connection: Pool;
+	cache = new Cache();
 
-	static setConnection(credentials: Credentials) {
+	static connect(credentials: Credentials) {
 		/*
 		'createPool()' opens a continuous parallel connection where multiple queries can be executed on the same connection and this returns an object with the type 'Pool'
 		*/

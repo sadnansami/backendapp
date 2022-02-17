@@ -1,4 +1,4 @@
-import { DatabaseConnector } from "./DatabaseConnector";
+import { DatabaseConnector } from "./Database";
 import { IQuery } from "./Interfaces";
 
 class Users extends DatabaseConnector implements IQuery {

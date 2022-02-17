@@ -5,6 +5,7 @@ export interface Credentials {
 	DB:string;
 };
 
-export interface IQuery {
-	read(): Promise<object>;
-};
+export interface IDatabase {
+	query(sql: string, args: any[]): Promise<any>;
+	read(): Promise<any>;
+}

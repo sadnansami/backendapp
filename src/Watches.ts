@@ -1,11 +1,7 @@
-import e from "express";
-import { DatabaseConnector } from "./DatabaseConnector";
-import { IQuery } from "./Interfaces";
-import Cache from "./utility/Cache";
+import DatabaseConnector from "./Database";
+import { IDatabase } from "./Interfaces";
 
-class Watches extends DatabaseConnector implements IQuery {
-	cache = new Cache();
-
+class Watches extends DatabaseConnector implements IDatabase{
 	create():Promise<any> {
 		return this.query(`
 			INSERT INTO watches(
@@ -43,19 +39,17 @@ class Watches extends DatabaseConnector implements IQuery {
 		//Always query checksum to check for any changes in the database
 		return this.query(`SELECT MOD(SUM(watch_id), ${this.cache.SIZE}) AS checksum from watches`)
 			.then((checksum) => {
-				//If Cache is empty or the checksum's are not identical then update Cache with new data
+				//If cache is empty or the checksum's are not identical then update Cache with new data
 				if(typeof this.cache.checksum == "undefined" || this.cache.checksum != checksum[0].checksum) {
-					this.query("SELECT * from watches")
+					return this.query("SELECT * from watches")
 						.then((watches) => {
+							//Add each watch from database into the cache
 							watches.forEach((watch: any) => {
 								this.cache.add(watch.watch_id, watch)
 							});
-						})
-						//Update new checksum
-						.then(() => {
-							this.cache.checksum = checksum[0].checksum
 
-							return this.cache.hashTable
+							//Update new checksum
+							this.cache.checksum = checksum[0].checksum
 						})
 				}
 			})

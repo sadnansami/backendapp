@@ -5,8 +5,8 @@ const router = Router();
 
 const brands = new Brands();
 
-router.get("/", (req: express.Request, res: express.Response): void => {
-	brands.read()
+router.get("/:id?", (req: express.Request, res: express.Response): void => {
+	brands.read(parseInt(req.params.id))
 		.then((data) => {
 			res.json(data);
 		}).catch(() => {

@@ -8,8 +8,8 @@ const watches = new Watches();
 const pm = new PatternMatching();
 
 
-router.get("/", (req: express.Request, res: express.Response): void => {
-	watches.read()
+router.get("/:id?", (req: express.Request, res: express.Response): void => {
+	watches.read(parseInt(req.params.id))
 		.then((data) => {
 			res.json(data);
 		}).catch(() => {
