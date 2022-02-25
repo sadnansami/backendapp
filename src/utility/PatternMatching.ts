@@ -1,11 +1,11 @@
-import HashFunctions from "./HashFunctions";
+import Hash from "./Hash";
 
-class PatternMatching extends HashFunctions {
+class PatternMatching extends Hash {
 	readonly CODES = "#abcdefghijklmnopqrstuvwxyz1234567890-_+&():/"
 
 	match(string: string, pattern: string): boolean {
-		string = this.simplify(string)
-		pattern = this.simplify(pattern)
+		string = this.filter(string)
+		pattern = this.filter(pattern)
 		
 		//A window is part of the entire string for which the hash is calculated and is as long as the pattern is.
 		let windowLower = 0;

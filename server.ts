@@ -1,10 +1,11 @@
 import express from "express";
-import cors from "cors";
 import "dotenv/config";
 import Database from "./src/Database";
-import { router as brandsrouter } from "./routes/BrandsRoute";
-import { router as watchesrouter } from "./routes/WatchesRoute";
+import BrandsRoute from "./routes/BrandsRoute";
+import WatchesRoute from "./routes/WatchesRoute";
+import UsersRoute from "./routes/UsersRoute";
 
+const PORT = 2000;
 const CREDENTIALS = {
 	HOST: process.env.HOST!,
 	USER: process.env.USER!,
@@ -12,17 +13,18 @@ const CREDENTIALS = {
 	DB: process.env.DB!
 };
 
-const PORT = 2000
-const app = express();
-
 Database.connect(CREDENTIALS);
 
-//Used to allow Cross-origin HTTP requests since the backend and frontend communicate via HTTP from different addresses
-app.use(cors());
-//Used for JSON data handling
-app.use(express.json())
-app.use("/brands", brandsrouter)
-app.use("/watches", watchesrouter)
+const app = express();
+const routers = [
+	BrandsRoute,
+	WatchesRoute,
+	UsersRoute,
+]
+
+routers.forEach((router) => {
+	new router(app)
+})
 
 app.listen(PORT, () => {
 	console.log(`Watchify Server running on port: ${PORT}`);

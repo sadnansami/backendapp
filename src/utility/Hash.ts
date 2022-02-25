@@ -1,16 +1,16 @@
-class HashFunctions {
+class Hashing {
 	readonly CODES = "#abcdefghijklmnopqrstuvwxyz1234567890-_+&():/";
 	readonly CODESLENGTH = this.CODES.length - 1
 
 
-	simplify(string: string): string {
+	filter(string: string): string {
 		//Remove whitespaces, then make string lowercase
 		return string.split(" ").join("").toLowerCase()
 	}
 
 	customHash(string: string): number {
 
-		string = this.simplify(string)
+		string = this.filter(string)
 		let carryDigit = 0;
 		let hashValue = "";
 
@@ -24,7 +24,7 @@ class HashFunctions {
 				}
 				
 				//The one's digit plus the carry digit from the digit before it
-				let tempOnesDigit = (parseInt(charCode.at(-1)!) + carryDigit).toString()
+				const tempOnesDigit = (parseInt(charCode.at(-1)!) + carryDigit).toString()
 
 				//In case 'tempOnesDigit' is greater than 9 then reset carry digit make the new carry digit its ten's digit
 				carryDigit = 0
@@ -34,7 +34,6 @@ class HashFunctions {
 
 				//concatenate hashValue with 'tempOnesDigit's
 				hashValue = tempOnesDigit.at(-1) + hashValue
-
 
 				//if the charCode has 2 digits add the ten's digit to the carry digit
 				if(charCode.length == 2) {
@@ -58,7 +57,7 @@ class HashFunctions {
 
 		for (let char = 0; char < string.length; char++) {
 			try {
-				let codeOfChar = this.CODES.indexOf(string[char])
+				const codeOfChar = this.CODES.indexOf(string[char])
 
 				hashValue += codeOfChar * (this.CODESLENGTH ** (-(char - string.length + 1)))
 			} catch {
@@ -70,4 +69,4 @@ class HashFunctions {
 	}
 }
 
-export default HashFunctions;
+export default Hashing;

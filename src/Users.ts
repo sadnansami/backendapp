@@ -1,8 +1,46 @@
 import Database from "./Database";
+import { IUser } from "./Interfaces";
 
 class Users extends Database {
-	read():Promise<any> {
-		return this.query("SELECT * FROM users")
+	async create(user: IUser):Promise<any> {
+		try {
+			const insertUser = await this.query(
+				`INSERT INTO users(
+					user_id,
+					user,
+					email,
+					status
+				) VALUE (?, ?, ?, "standard")`,
+				[
+					user.user_id,
+					user.user,
+					user.email,
+				]
+			)
+
+			//If Insert is successful, then it returns affected rows as 1
+			if(insertUser.affectedRows == 1) {
+				//Return modified user Object rather than querying for efficiency
+				return {...user, "status": "standard"}
+			}
+		} catch(err) {
+			throw "Error: Creating User failed with error: " + err
+		}
+
+		
+	}
+
+	async read(id?: string):Promise<any> {
+		let res;
+		
+		if(typeof id != "undefined") {
+			console.log("mama")
+			res = this.query("SELECT * FROM users WHERE user_id=?", [id])
+		} else {
+			res = this.query("SELECT * FROM users")
+		}
+
+		return res
 	}
 }
 

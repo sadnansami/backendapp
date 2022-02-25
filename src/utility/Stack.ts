@@ -1,5 +1,5 @@
 import { Node, LinkedList } from "./LinkedList";
-import { IStack } from "./UtilityInterfaces";
+import { IStack } from "../Interfaces";
 
 export class Stack extends LinkedList implements IStack {    
     topPointer: Node

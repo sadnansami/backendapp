@@ -2,11 +2,11 @@ import mysql2, { Pool } from "mysql2/promise";
 import { Credentials } from "./Interfaces";
 import Cache from "./utility/Cache";
 
-export class Database {
+export abstract class Database {
 	protected static connection: Pool;
-	//Gets the name of the class and uses this as the table name. I.e.: if 'Brands.ts' is instantiated, its 'table' attribute will be 'Brands' and this can be dynamically used in SQL
-	table = this.constructor.name;
-	cache = new Cache();
+	//Gets the name of the class and uses this as the table name to dynamically check the checksum of all the IDs in that table
+	table = this.constructor.name
+	protected cache = new Cache();
 
 	static connect(credentials: Credentials) {
 		/*
@@ -33,6 +33,7 @@ export class Database {
 	async query(sql: string, args: any[]): Promise<any>;
 	
 	async query(sql: string, args?: any[]): Promise<any> {
+		let rawQueryResult: any;
 		let res: any;
 		try {
 			if(typeof Database.connection == "undefined") {
@@ -40,39 +41,33 @@ export class Database {
 			}
 
 			if(typeof args == "undefined") {
-				[res] = await Database.connection.query(sql)
-
-				return res
+				[rawQueryResult] = await Database.connection.query(sql)
 			} else {
-				res = await Database.connection.execute(sql, args)
+				[rawQueryResult] = await Database.connection.execute(sql, args)
 			}
+
+			res = await rawQueryResult
+
+			return res
 		} catch(err) {
 			throw err
 		}
 	}
 
-	read(id?: number):Promise<any> {
+	protected async cacheHandler(idField: string, data: any):Promise<any> {
 		//Always query checksum to check for any changes in the database
-		return this.query(`SELECT MOD(SUM(id), ${this.cache.SIZE}) AS checksum from ${this.table}`)
-			.then((checksum) => {
-				//If cache is empty or the checksum's are not identical then update Cache with new data
-				if(typeof this.cache.checksum == "undefined" || this.cache.checksum != checksum[0].checksum) {
-					return this.query(`SELECT * from ${this.table}`)
-						.then((tableData) => {
-							//Add each watch from database into the cache
-							tableData.forEach((row: any) => {
-								this.cache.add(row.id, row)
-							});
+		const checksum = await this.query(`SELECT MOD(SUM(${idField}), ${this.cache.SIZE}) AS value from ${this.table}`)
 
-							//Update new checksum
-							this.cache.checksum = checksum[0].checksum
-						})
-				}
-			})
-			.then(() => {
-				//The 'read' method in the Cache has 2 overloads, one which accepts an index to be accessed and one which returns the entire Cache as an array
-				return this.cache.read(id!)
-			})
+		//If cache is empty or the checksum's are not identical then update Cache with new data
+		if(typeof this.cache.checksum == "undefined" || this.cache.checksum != checksum[0].value) {
+			//Add each row from the data into the cache
+			data.forEach((row: any) => {
+				this.cache.add(row[idField], row)
+			});
+
+			//Update new checksum
+			this.cache.checksum = checksum[0].value
+		}
 	}
 }
 
