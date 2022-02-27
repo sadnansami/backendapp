@@ -1,6 +1,6 @@
 import express, { Router } from "express";
-import Brands from "../src/Brands";
-import Configuration from "../src/Configuration";
+import Brands from "../Brands";
+import Configuration from "../Configuration";
 
 class BrandsRoute extends Configuration {
 	brands = new Brands();

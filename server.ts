@@ -1,9 +1,9 @@
 import express from "express";
 import "dotenv/config";
 import Database from "./src/Database";
-import BrandsRoute from "./routes/BrandsRoute";
-import WatchesRoute from "./routes/WatchesRoute";
-import UsersRoute from "./routes/UsersRoute";
+import BrandsRoute from "./src/routes/BrandsRoute";
+import WatchesRoute from "./src/routes/WatchesRoute";
+import UsersRoute from "./src/routes/UsersRoute";
 
 const PORT = 2000;
 const CREDENTIALS = {

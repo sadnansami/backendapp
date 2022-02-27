@@ -1,8 +1,8 @@
 import express from "express";
-import Validation from "../src/Configuration";
-import PatternMatching from "../src/utility/PatternMatching";
-import Watches from "../src/Watches";
-import WatchPrice from "../src/WatchPrice";
+import Validation from "../Configuration";
+import PatternMatching from "../utility/PatternMatching";
+import Watches from "../Watches";
+import WatchPrice from "../WatchPrice";
 
 class WatchesRoute extends Validation {
 	watches = new Watches();

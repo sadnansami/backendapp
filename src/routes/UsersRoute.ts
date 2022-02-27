@@ -1,6 +1,6 @@
 import express, { Router } from "express";
-import Configuration from "../src/Configuration";
-import Users from "../src/Users";
+import Configuration from "../Configuration";
+import Users from "../Users";
 
 class UsersRoute extends Configuration {
 	signedinUser: any;
