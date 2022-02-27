@@ -31,13 +31,13 @@ class Users extends Database {
 	}
 
 	async read(id?: string):Promise<any> {
-		let res;
-		
+		let res: any;
+
 		if(typeof id != "undefined") {
-			console.log("mama")
-			res = this.query("SELECT * FROM users WHERE user_id=?", [id])
+			res = await this.query("SELECT * FROM users WHERE user_id=?", [id])
+			res = res[0]
 		} else {
-			res = this.query("SELECT * FROM users")
+			res = await this.query("SELECT * FROM users")
 		}
 
 		return res
